@@ -2,11 +2,15 @@
 
 ## apollo-configservice
 
-config-service  + meta-service + eureka server（http://localhost:8080/）
+config-service  + meta-service + eureka server,注册自己到eureka（http://localhost:8080/）
+
+提供配置的读取、推送等功能，服务对象是Apollo客户端（我们自己的微服务应用）
 
 ## apollo-adminservice
 
-一些辅助管理，http://localhost:8090/
+注册自己到eureka，http://localhost:8090/
+
+提供配置的修改、发布等功能，服务对象是Apollo Portal（管理界面）
 
 ## apollo-portal
 
@@ -15,6 +19,10 @@ web界面的项目，http://localhost:8070/
 ## 核心模块之间的关系
 
 ![image-20201022152316617](image-20201022152316617.png)
+
+- 在Eureka之上我们架了一层Meta Server用于封装Eureka的服务发现接口,Meta Server从Eureka获取Config Service和Admin Service的服务信息，相当于是一个Eureka Client,Meta Server只是一个逻辑角色，在部署时和Config Service是在一个JVM进程中的，所以IP、端口和Config Service一致
+- Client通过域名访问Meta Server获取Config Service服务列表（IP+Port），而后直接通过IP+Port访问服务，同时在Client侧会做load balance、错误重试
+- Portal通过域名访问Meta Server获取Admin Service服务列表（IP+Port），而后直接通过IP+Port访问服务，同时在Portal侧会做load balance、错误重试
 
 #本地安装步骤
 
@@ -65,11 +73,15 @@ java -jar apollo-portal-1.8.0-SNAPSHOT.jar
 
 ## 访问http://localhost:8080
 
-默认登录名/密码：apollo/admin
+进入eureka界面
 
 ##访问http://localhost:8070
 
+默认登录名/密码：apollo/admin，portal管理页面
+
 ## 访问http://localhost:8090
+
+进入eureka界面
 
 # 在springboot中使用apollo
 
